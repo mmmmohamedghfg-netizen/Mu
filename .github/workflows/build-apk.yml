@@ -1,0 +1,45 @@
+name: Build Sound Control Pro X
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Extract project ZIP
+        run: unzip -o SoundControlProX.zip
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Build debug APK
+        run: gradle -p SoundControlProX assembleDebug --stacktrace
+
+      - name: Run unit tests
+        run: gradle -p SoundControlProX testDebugUnitTest --stacktrace
+
+      - name: Run Android Lint
+        run: gradle -p SoundControlProX lintDebug --stacktrace
+
+      - name: Upload debug APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: SoundControlProX-debug.apk
+          path: SoundControlProX/app/build/outputs/apk/debug/app-debug.apk
