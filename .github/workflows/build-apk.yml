@@ -23,20 +23,20 @@ jobs:
           distribution: temurin
           java-version: 17
 
-      - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v4
-
-      - name: Grant execute permission to Gradle wrapper
-        run: chmod +x gradlew || true
+      - name: Generate compatible Gradle wrapper
+        run: |
+          cd SoundControlProX
+          gradle wrapper --gradle-version 8.9
+          chmod +x gradlew
 
       - name: Build debug APK
-        run: gradle -p SoundControlProX assembleDebug --stacktrace
+        run: ./SoundControlProX/gradlew -p SoundControlProX assembleDebug --stacktrace
 
       - name: Run unit tests
-        run: gradle -p SoundControlProX testDebugUnitTest --stacktrace
+        run: ./SoundControlProX/gradlew -p SoundControlProX testDebugUnitTest --stacktrace
 
       - name: Run Android Lint
-        run: gradle -p SoundControlProX lintDebug --stacktrace
+        run: ./SoundControlProX/gradlew -p SoundControlProX lintDebug --stacktrace
 
       - name: Upload debug APK
         uses: actions/upload-artifact@v4
